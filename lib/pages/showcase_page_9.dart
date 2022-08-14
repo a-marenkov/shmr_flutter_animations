@@ -321,6 +321,10 @@ class _ActivityRingsPainterHelper {
 
 class _ActivityRingsBackgroundPainter extends CustomPainter {
   @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =>
+      runtimeType != oldDelegate.runtimeType;
+
+  @override
   void paint(Canvas canvas, Size size) {
     final helper = _ActivityRingsPainterHelper(size);
     final paint = Paint()
@@ -348,10 +352,6 @@ class _ActivityRingsBackgroundPainter extends CustomPainter {
       paint,
     );
   }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) =>
-      runtimeType != oldDelegate.runtimeType;
 }
 
 class _ActivityRingsForegroundPainter extends CustomPainter {
@@ -364,6 +364,12 @@ class _ActivityRingsForegroundPainter extends CustomPainter {
     required this.exercise,
     required this.stand,
   });
+
+  @override
+  bool shouldRepaint(covariant _ActivityRingsForegroundPainter oldDelegate) =>
+      move != oldDelegate.move ||
+      exercise != oldDelegate.exercise ||
+      stand != oldDelegate.stand;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -579,12 +585,6 @@ class _ActivityRingsForegroundPainter extends CustomPainter {
       canvas.restore();
     }
   }
-
-  @override
-  bool shouldRepaint(covariant _ActivityRingsForegroundPainter oldDelegate) =>
-      move != oldDelegate.move ||
-      exercise != oldDelegate.exercise ||
-      stand != oldDelegate.stand;
 }
 
 class ActivityRingsTween extends Animatable<ActivityRingsData> {
@@ -599,57 +599,6 @@ class ActivityRingsTween extends Animatable<ActivityRingsData> {
   ActivityRingsData get activity => _activity;
 
   Curve get curve => _curve;
-
-  set activity(ActivityRingsData activity) {
-    if (activity == this.activity) {
-      return;
-    }
-
-    _activity = activity;
-
-    moveTween.end = activity.move;
-    moveInterval.curve = Interval(
-      0.0,
-      activity.moveEnd,
-      curve: curve,
-    );
-    exerciseTween.end = activity.exercise;
-    exerciseInterval.curve = Interval(
-      0.0,
-      activity.exerciseEnd,
-      curve: curve,
-    );
-    standTween.end = activity.stand;
-    standInterval.curve = Interval(
-      0.0,
-      activity.standEnd,
-      curve: curve,
-    );
-  }
-
-  set curve(Curve curve) {
-    if (curve == this.curve) {
-      return;
-    }
-
-    _curve = curve;
-
-    moveInterval.curve = Interval(
-      0.0,
-      activity.moveEnd,
-      curve: curve,
-    );
-    exerciseInterval.curve = Interval(
-      0.0,
-      activity.exerciseEnd,
-      curve: curve,
-    );
-    standInterval.curve = Interval(
-      0.0,
-      activity.standEnd,
-      curve: curve,
-    );
-  }
 
   late final moveTween = Tween(begin: 0.0, end: activity.move);
 
@@ -674,6 +623,43 @@ class ActivityRingsTween extends Animatable<ActivityRingsData> {
   );
 
   late final stand = standTween.chain(standInterval);
+
+  set activity(ActivityRingsData activity) {
+    if (activity == this.activity) {
+      return;
+    }
+    _activity = activity;
+    _update();
+  }
+
+  set curve(Curve curve) {
+    if (curve == this.curve) {
+      return;
+    }
+    _curve = curve;
+    _update();
+  }
+
+  void _update() {
+    moveTween.end = activity.move;
+    moveInterval.curve = Interval(
+      0.0,
+      activity.moveEnd,
+      curve: curve,
+    );
+    exerciseTween.end = activity.exercise;
+    exerciseInterval.curve = Interval(
+      0.0,
+      activity.exerciseEnd,
+      curve: curve,
+    );
+    standTween.end = activity.stand;
+    standInterval.curve = Interval(
+      0.0,
+      activity.standEnd,
+      curve: curve,
+    );
+  }
 
   @override
   ActivityRingsData transform(double t) {

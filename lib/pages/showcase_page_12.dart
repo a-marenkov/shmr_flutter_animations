@@ -1,6 +1,5 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 
 import 'common/showcase_scaffold.dart';
 
@@ -17,8 +16,6 @@ class ShowcaseMaterialTransitions extends StatefulWidget {
 
 class _ShowcaseMaterialTransitionsState
     extends State<ShowcaseMaterialTransitions> {
-  bool _slowAnimations = false;
-
   @override
   Widget build(BuildContext context) {
     return ShowcaseScaffold(
