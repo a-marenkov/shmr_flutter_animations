@@ -624,20 +624,15 @@ class ActivityRingsTween extends Animatable<ActivityRingsData> {
 
   late final stand = standTween.chain(standInterval);
 
-  set activity(ActivityRingsData activity) {
-    if (activity == this.activity) {
-      return;
+  void update(
+    ActivityRingsData activity, {
+    Curve curve = Curves.fastOutSlowIn,
+  }) {
+    if (this.activity != activity || this.curve != curve) {
+      _activity = activity;
+      _curve = curve;
+      _update();
     }
-    _activity = activity;
-    _update();
-  }
-
-  set curve(Curve curve) {
-    if (curve == this.curve) {
-      return;
-    }
-    _curve = curve;
-    _update();
   }
 
   void _update() {
